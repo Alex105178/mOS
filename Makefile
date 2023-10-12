@@ -40,6 +40,7 @@ ASM_OS_ENTRY_SOURCE := ./src/boot/os_entry.asm
 
 BOOT_OBJ := boot.o
 OS_BIN := mOS.bin
+OS_FLOPPY_IMG := mOS_floppy.img
 
 C_FILES = $(shell find ./ -name '*.[ch]')
 
@@ -51,7 +52,7 @@ OBJ_NAMES := src/os/main.o src/os/test.o os_entry.o src/lib/video/VGA_text.o \
   src/lib/pit/pit.o
 
 
-.PHONY: clean qemu test
+.PHONY: clean qemu bochs test
 
 $(OS_BIN): $(OBJ_NAMES) $(BOOT_OBJ)
 	$(LD) $(LFLAGS) -T link.ld $(OBJ_NAMES) -o mOS.elf
@@ -94,6 +95,13 @@ qemu-gdb-boot: $(OS_BIN)
 		-ex 'break *0x7c00' \
 		-ex 'continue'
 
+$(OS_FLOPPY_IMG): $(OS_BIN)
+	dd if=/dev/zero of=$(OS_FLOPPY_IMG) bs=1024 count=1440
+	dd if=$(OS_BIN) of=$(OS_FLOPPY_IMG) seek=0 conv=notrunc
+
+bochs: $(OS_FLOPPY_IMG)
+	bochs -f bochs/bochsrc -log bochs/bochslog
+
 test: $(OS_BIN)
 	cd tests && $(MAKE) clean
 	cd tests && $(MAKE) test
@@ -105,5 +113,5 @@ format: $(C_FILES)
 
 clean:
 	rm -f mOS
-	rm -f *.o $(OBJ_NAMES) *.bin *.elf *.~ src/*~ src/boot/*~ docs/*~
+	rm -f *.o $(OBJ_NAMES) *.bin *.img *.elf *.~ src/*~ src/boot/*~ docs/*~
 	cd tests && $(MAKE) clean
