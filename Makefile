@@ -102,6 +102,12 @@ $(OS_FLOPPY_IMG): $(OS_BIN)
 bochs: $(OS_FLOPPY_IMG)
 	bochs -f bochs/bochsrc -log bochs/bochslog
 
+bochs_p4: $(OS_FLOPPY_IMG)
+	bochs -f bochs/bochsrc_p4 -log bochs/bochslog
+
+bochs_i7: $(OS_FLOPPY_IMG)
+	bochs -f bochs/bochsrc_i7 -log bochs/bochslog
+
 test: $(OS_BIN)
 	cd tests && $(MAKE) clean
 	cd tests && $(MAKE) test
