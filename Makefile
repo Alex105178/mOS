@@ -40,7 +40,7 @@ ASM_OS_ENTRY_SOURCE := ./src/boot/os_entry.asm
 
 BOOT_OBJ := boot.o
 OS_BIN := mOS.bin
-OS_FLOPPY_IMG := mOS_floppy.img
+OS_FLOPPY_IMG := bochs/mOS_floppy.img
 
 C_FILES = $(shell find ./ -name '*.[ch]')
 
@@ -114,4 +114,5 @@ format: $(C_FILES)
 clean:
 	rm -f mOS
 	rm -f *.o $(OBJ_NAMES) *.bin *.img *.elf *.~ src/*~ src/boot/*~ docs/*~
+	rm -f $(OS_FLOPPY_IMG)
 	cd tests && $(MAKE) clean
